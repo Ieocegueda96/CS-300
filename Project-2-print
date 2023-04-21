@@ -1,0 +1,83 @@
+/**
+ * Insert a course
+ *
+ * @param course The course to insert
+ */
+void HashTable::Insert(Course course) {
+    // create the key for the given course
+    unsigned key = hash(atoi(course.courseId.c_str()));
+
+    // retrieve node using key
+    Node* prevNode = &(nodes.at(key));
+
+    // if no entry found for the key
+    if (prevNode == nullptr) {
+        // assign this node to the key position
+        Node* nextNode = new Node(course, key);
+        nodes.insert(nodes.begin() + key, (*nextNode));
+    }
+    // else if node is not used
+    else {
+        // assing old node key to UNIT_MAX, set to key, set old node to course and old node next to null pointer
+        if (prevNode->key == UINT_MAX) {
+            prevNode->key = key;
+            prevNode->course = course;
+            prevNode->next = nullptr;
+        }
+        // else find the next open node
+        else {
+            // add new newNode to end
+            while (prevNode->next != nullptr) {
+                prevNode = prevNode->next;
+            }
+        }
+    }
+}
+
+/**
+ * Print all courses
+ */
+void HashTable::PrintAll() {
+    // for node begin to end iterate
+    // if key not equal to UINT_MAx
+    // Loop and display the courses read
+    for (int i = 0; i < nodes.size(); ++i) {
+        displayCourse(nodes[i].course);
+    }
+}
+
+/**
+ * Search for the specified courseId
+ *
+ * @param courseId The course id to search for
+ */
+Course HashTable::Search(string courseId) {
+    Course course;
+
+    // create the key for the given course
+    unsigned key = hash(atoi(courseId.c_str()));
+    Node* node = &(nodes.at(key));
+
+    // if entry found for the key
+    if (node != nullptr && node->key != UINT_MAX &&
+        node->course.courseId.compare(courseId) == 0) {
+        //return node course
+        return node->course;
+    }
+
+    // if no entry found for the key
+    if (node == nullptr || node->key == UINT_MAX) {
+        // return course
+        return course;
+    }
+    // while node not equal to nullptr
+    while (node != nullptr) {
+        // if the current node matches, return it
+        if (node->key != UINT_MAX && node->course.courseId.compare(courseId) == 0) {
+            return node->course;
+        }
+        //node is equal to next node
+        node = node->next;
+    }
+    return course;
+}
